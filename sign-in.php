@@ -228,9 +228,7 @@
                             <div class="clean-theme-signinup-right-title">
                                 <h4><?php echo __("website/sign/in"); ?></h4>
 
-                                <div class="clear"></div>
-
-
+                                
 
                                 <?php
                                     if($connectionButtons){

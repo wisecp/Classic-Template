@@ -412,8 +412,8 @@
 
         $("#manageAddressForm input[name=full_name]").val(full_name);
         $("#manageAddressForm input[name=company_name]").val(comp_name);
-        $("#manageAddressForm input[name=company_tax_number]").val(comp_tax_off);
-        $("#manageAddressForm input[name=company_tax_office]").val(comp_tax_num);
+        $("#manageAddressForm input[name=company_tax_number]").val(comp_tax_num);
+        $("#manageAddressForm input[name=company_tax_office]").val(comp_tax_off);
         $("#manageAddressForm input[name=email]").val(email);
         if(phone.length > 1) tel2.setNumber("+"+phone);
         $('#manageAddressForm input[name=gsm]').val(phone);
@@ -508,9 +508,9 @@
         ?>
         <li><a href="javascript:void(0)" class="tablinks" data-k="password" onclick="openTab(this, 'password')"><i class="fa fa-key" aria-hidden="true"></i> <?php echo __("website/account_info/info-tab4"); ?></a></li>
         <li><a href="javascript:void(0)" class="tablinks" data-k="verification" onclick="openTab(this, 'verification')"><i class="fa fa-check" aria-hidden="true"></i> <?php echo __("website/account_info/info-tab5"); ?></a></li>
-        <?php if(Config::get("options/gdpr-status")): ?>
-            <li><a href="javascript:void(0)" class="tablinks" data-k="gdpr" onclick="openTab(this, 'gdpr')"><i class="fa fa-user-shield" aria-hidden="true"></i> <?php echo __("website/account_info/info-tab-gdpr"); ?></a></li>
-        <?php endif; ?>
+       <?php if(Config::get("options/gdpr-status")): ?>
+           <li><a href="javascript:void(0)" class="tablinks" data-k="gdpr" onclick="openTab(this, 'gdpr')"><i class="fa fa-user-shield" aria-hidden="true"></i> <?php echo __("website/account_info/info-tab-gdpr"); ?></a></li>
+       <?php endif; ?>
     </ul>
 
 
@@ -519,42 +519,39 @@
 
 
             <?php
-                if(isset($requiredFields) && $requiredFields){
+                if($requiredFields["general"] ?? [])
+                {
                     ?>
                     <div class="red-info">
                         <div class="padding15">
                             <i class="fa fa-info-circle" aria-hidden="true"></i>
-                            <div class="">
-                                <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
-                                <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
-                                <?php
-                                    foreach($requiredFields AS $key => $name){
-                                        if(strstr($key,"field_"))
-                                            $id = "#c" . $key;
-                                        elseif($key == "gsm" || $key == "identity" || $key == "birthday")
-                                            $id = "#".$key;
-                                        elseif($key == "company_name" || $key == "company_tax_number" || $key == "company_tax_office")
-                                            $id = "#".$key;
-                                        else
-                                            $id= "#empty";
+                            <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                            <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                            <?php
+                                foreach($requiredFields["general"] AS $key => $fv)
+                                {
+                                    $message        = $fv["message"];
+                                    $element_id     = $fv["element_id"];
 
-                                        ?>
-                                        <p><strong>- <?php echo $name; ?></strong></p>
+                                    ?>
+                                    <p><strong>- <?php echo $message; ?></strong></p>
 
-                                        <script type="text/javascript">
-                                            $(document).ready(function(){
-                                                $("<?php echo $id; ?>").attr("style","border-bottom:2px solid red; color:red;");
-                                                $("<?php echo $id; ?>").closest("tr").attr("style","color:red;");
-                                                $("<?php echo $id; ?>").change(function(){
-                                                    $(this).removeAttr("style");
-                                                    $(this).closest("tr").removeAttr("style");
-                                                });
+                                <?php if($element_id): ?>
+                                    <script type="text/javascript">
+                                        $(document).ready(function(){
+                                            $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                            $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                            $("<?php echo $element_id; ?>").change(function(){
+                                                $(this).removeAttr("style");
+                                                $(this).closest("tr").removeAttr("style");
                                             });
-                                        </script>
-                                        <?php
-                                    }
-                                ?>
-                            </div> <div class="clear"></div>
+                                        });
+                                    </script>
+                                <?php endif; ?>
+                                    <?php
+                                }
+                            ?>
+                            <div class="clear"></div>
                         </div>
 
                     </div>
@@ -850,12 +847,50 @@
         </style>
         <div class="tabcontentcon"  style="margin-top:25px;">
 
+            <?php
+                if($requiredFields["billing"] ?? [])
+                {
+                    ?>
+                    <div class="red-info">
+                        <div class="padding15">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                            <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                            <?php
+                                foreach($requiredFields["billing"] AS $key => $fv)
+                                {
+                                    $message        = $fv["message"];
+                                    $element_id     = $fv["element_id"];
 
+                                    ?>
+                                    <p><strong>- <?php echo $message; ?></strong></p>
 
+                                <?php if($element_id): ?>
+                                    <script type="text/javascript">
+                                        $(document).ready(function(){
+                                            $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                            $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                            $("<?php echo $element_id; ?>").change(function(){
+                                                $(this).removeAttr("style");
+                                                $(this).closest("tr").removeAttr("style");
+                                            });
+                                        });
+                                    </script>
+                                <?php endif; ?>
+                                    <?php
+                                }
+                            ?>
+                            <div class="clear"></div>
+                        </div>
+
+                    </div>
+                    <?php
+                }
+            ?>
 
             <div id="accordion2" style="margin-top:25px;" class="ui-accordion ui-widget ui-helper-reset" role="tablist">
 
-
+              
                 <!-- Add/Edit Billing Address -->
                 <div id="manageAddress" style="display: none">
                     <h3 class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons" role="tab" id="manage_title_1" aria-controls="ui-id-2" aria-selected="true" aria-expanded="true" tabindex="0"><span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-s"></span><strong><?php echo __("website/account_info/add-new-address"); ?></strong></h3>
@@ -1166,6 +1201,47 @@
     <div id="preferences" class="tabcontent">
         <div class="tabcontentcon">
 
+            <?php
+                if($requiredFields["preferences"] ?? [])
+                {
+                    ?>
+                    <div class="red-info">
+                        <div class="padding15">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                            <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                            <?php
+                                foreach($requiredFields["preferences"] AS $key => $fv)
+                                {
+                                    $message        = $fv["message"];
+                                    $element_id     = $fv["element_id"];
+
+                                    ?>
+                                    <p><strong>- <?php echo $message; ?></strong></p>
+
+                                <?php if($element_id): ?>
+                                    <script type="text/javascript">
+                                        $(document).ready(function(){
+                                            $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                            $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                            $("<?php echo $element_id; ?>").change(function(){
+                                                $(this).removeAttr("style");
+                                                $(this).closest("tr").removeAttr("style");
+                                            });
+                                        });
+                                    </script>
+                                <?php endif; ?>
+                                    <?php
+                                }
+                            ?>
+                            <div class="clear"></div>
+                        </div>
+
+                    </div>
+                    <?php
+                }
+            ?>
+
             <form action="<?php echo $operation_link; ?>" method="post" id="ModifyPreferences">
                 <?php echo Validation::get_csrf_token('account'); ?>
 
@@ -1281,6 +1357,49 @@
 
     <div id="password" class="tabcontent">
         <div class="tabcontentcon">
+
+            <?php
+                if($requiredFields["password"] ?? [])
+                {
+                    ?>
+                    <div class="red-info">
+                        <div class="padding15">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                            <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                            <?php
+                                foreach($requiredFields["password"] AS $key => $fv)
+                                {
+                                    $message        = $fv["message"];
+                                    $element_id     = $fv["element_id"];
+
+                                    ?>
+                                    <p><strong>- <?php echo $message; ?></strong></p>
+
+                                <?php if($element_id): ?>
+                                    <script type="text/javascript">
+                                        $(document).ready(function(){
+                                            $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                            $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                            $("<?php echo $element_id; ?>").change(function(){
+                                                $(this).removeAttr("style");
+                                                $(this).closest("tr").removeAttr("style");
+                                            });
+                                        });
+                                    </script>
+                                <?php endif; ?>
+                                    <?php
+                                }
+                            ?>
+                            <div class="clear"></div>
+                        </div>
+
+                    </div>
+                    <?php
+                }
+            ?>
+
+
             <form action="<?php echo $operation_link; ?>" method="post" id="ModifyPassword">
                 <?php echo Validation::get_csrf_token('account'); ?>
 
@@ -1307,7 +1426,7 @@
 
                     </div>
                     <div class="yuzde70">
-                        <a class="sbtn" href="javascript:void 0;" onclick="$('#password_primary').attr('type','text'); $('#password_primary,#password_again').val(voucher_codes.generate({length:16,charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*()-_=+[]\|;:,./?'})).trigger('change');"><i class="fa fa-refresh"></i> <?php echo __("website/account_products/new-random-password"); ?></a>
+                        <a class="lbtn" href="javascript:void 0;" onclick="$('#password_primary').attr('type','text'); $('#password_primary,#password_again').val(voucher_codes.generate({length:16,charset: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*()-_=+[]\|;:,./?'})).trigger('change');"><i class="fa fa-refresh"></i> <?php echo __("website/account_products/new-random-password"); ?></a>
 
                         <div style="width: 200px;display: inline-block;">
                             <div id="weak" style="display:block;" class="level-block"><?php echo __("website/sign/up-form-password-level"); ?>: <strong><?php echo __("website/sign/up-form-password-level1"); ?></strong></div>
@@ -1363,16 +1482,58 @@
         </div>
     </div>
 
-
     <div id="verification" class="tabcontent">
         <div class="tabcontentcon">
+
+
+            <?php
+                if($requiredFields["verification"] ?? [])
+                {
+                    ?>
+                    <div class="red-info">
+                        <div class="padding15">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                            <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                            <?php
+                                foreach($requiredFields["verification"] AS $key => $fv)
+                                {
+                                    $message        = $fv["message"];
+                                    $element_id     = $fv["element_id"];
+
+                                    ?>
+                                    <p><strong>- <?php echo $message; ?></strong></p>
+
+                                <?php if($element_id): ?>
+                                    <script type="text/javascript">
+                                        $(document).ready(function(){
+                                            $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                            $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                            $("<?php echo $element_id; ?>").change(function(){
+                                                $(this).removeAttr("style");
+                                                $(this).closest("tr").removeAttr("style");
+                                            });
+                                        });
+                                    </script>
+                                <?php endif; ?>
+                                    <?php
+                                }
+                            ?>
+                            <div class="clear"></div>
+                        </div>
+
+                    </div>
+                    <?php
+                }
+            ?>
 
 
             <div class="userverification" style="display:block">
 
                 <?php
 
-                    if($remainingVerifications["force"] > 0){
+                    if($remainingVerifications["force"] > 0)
+                    {
                         ?>
                         <div class="userverification-headinfo"><i class="fa fa-shield" aria-hidden="true"></i>
                             <h4 style="color: #F44336;"><strong><?php echo __("website/account_info/verification-text1"); ?></strong></h4>
@@ -1380,18 +1541,18 @@
                         </div>
                         <?php
                     }
-                    else{
+                    else
+                    {
                         ?>
-                        <div class="userverification-headinfo">
-                            <i class="fa fa-shield" aria-hidden="true" style="color:#4caf50;"></i>
+                        <div class="userverification-headinfo"><i class="fa fa-shield" aria-hidden="true" style="color:#4caf50;"></i>
                             <h4 style="color: #4caf50;"><strong><?php echo __("website/account_info/verification-text3"); ?></strong></h4>
                             <h5><?php echo __("website/account_info/verification-text4"); ?></h5>
                         </div>
                         <?php
                     }
 
-
-                    if(isset($remainingVerifications["verified-email"])){
+                    if(isset($remainingVerifications["verified-email"]))
+                    {
                         ?>
                         <div class="hesapbilgisi">
                             <div class="yuzde50">
@@ -1469,7 +1630,8 @@
                         <?php
                     }
 
-                    if(isset($remainingVerifications["verified-gsm"])){
+                    if(isset($remainingVerifications["verified-gsm"]))
+                    {
                         ?>
                         <div class="hesapbilgisi">
                             <div class="yuzde50">
@@ -1557,7 +1719,6 @@
                         if($remainingVerifications["document_filters"]){
                             $show_submit = false;
 
-
                             ?>
                             <form action="<?php echo $operation_link; ?>" method="post" id="SubmitDocumentVerification" enctype="multipart/form-data">
                                 <?php echo Validation::get_csrf_token('account'); ?>
@@ -1567,10 +1728,8 @@
                                     foreach($remainingVerifications["document_filters"] AS $f_id=>$f){
                                         if(!isset($f["fields"][$u_lang])) continue;
                                         $fields = $f["fields"][$u_lang];
-                                        foreach($fields AS $f_k=>$field)
-                                        {
+                                        foreach($fields AS $f_k=>$field){
                                             $record = isset($field["record"]) ? $field["record"] : [];
-                                            $field["name"] = htmlspecialchars($field["name"]);
                                             ?>
                                             <div class="hesapbilgisi">
                                                 <div class="yuzde50">
@@ -1578,11 +1737,11 @@
                                                 </div>
                                                 <div class="yuzde50">
                                                     <?php
+
                                                         if(!$record || $record["status"] == 'unverified'){
                                                             $r_value     = $record ? $record["field_value"] : '';
                                                             $show_submit = true;
-                                                            if($record && $record["status"] == 'unverified')
-                                                            {
+                                                            if($record && $record["status"] == 'unverified'){
                                                                 ?>
                                                                 <strong><span style="color: #F44336;"><i class="fa fa-times-circle-o" aria-hidden="true"></i> <?php echo __("website/account_info/verification-text5"); ?></span></strong>
                                                                 <?php
@@ -1706,19 +1865,14 @@
                             <?php
 
 
-
                         }
                     }
                 ?>
             </div>
 
 
-
-
         </div>
     </div>
-
-
 
     <?php
         if($c_s_m && $c_s_m != "none")
@@ -1726,6 +1880,49 @@
             ?>
             <div id="csm" class="tabcontent">
                 <div class="tabcontentcon">
+
+
+                    <?php
+                        if($requiredFields["csm"] ?? [])
+                        {
+                            ?>
+                            <div class="red-info">
+                                <div class="padding15">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                                    <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                                    <?php
+                                        foreach($requiredFields["csm"] AS $key => $fv)
+                                        {
+                                            $message        = $fv["message"];
+                                            $element_id     = $fv["element_id"];
+
+                                            ?>
+                                            <p><strong>- <?php echo $message; ?></strong></p>
+
+                                        <?php if($element_id): ?>
+                                            <script type="text/javascript">
+                                                $(document).ready(function(){
+                                                    $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                                    $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                                    $("<?php echo $element_id; ?>").change(function(){
+                                                        $(this).removeAttr("style");
+                                                        $(this).closest("tr").removeAttr("style");
+                                                    });
+                                                });
+                                            </script>
+                                        <?php endif; ?>
+                                            <?php
+                                        }
+                                    ?>
+                                    <div class="clear"></div>
+                                </div>
+
+                            </div>
+                            <?php
+                        }
+                    ?>
+
 
                     <script type="text/javascript">
                         let waiting_text = '<i class="fa fa-spinner" style="-webkit-animation:fa-spin 2s infinite linear;animation: fa-spin 2s infinite linear;" aria-hidden="true"></i>'
@@ -2004,6 +2201,48 @@
                         </div>
                     </div>
 
+                    <?php
+                        if($requiredFields["gdpr"] ?? [])
+                        {
+                            ?>
+                            <div class="red-info">
+                                <div class="padding15">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    <h5><strong><?php echo __("website/account_info/required-field-title"); ?></strong></h5>
+                                    <p style="margin:10px 0px;"><?php echo __("website/account_info/required-field"); ?></p>
+                                    <?php
+                                        foreach($requiredFields["gdpr"] AS $key => $fv)
+                                        {
+                                            $message        = $fv["message"];
+                                            $element_id     = $fv["element_id"];
+
+                                            ?>
+                                            <p><strong>- <?php echo $message; ?></strong></p>
+
+                                        <?php if($element_id): ?>
+                                            <script type="text/javascript">
+                                                $(document).ready(function(){
+                                                    $("<?php echo $element_id; ?>").attr("style","border-bottom:2px solid red; color:red;");
+                                                    $("<?php echo $element_id; ?>").closest("tr").attr("style","color:red;");
+                                                    $("<?php echo $element_id; ?>").change(function(){
+                                                        $(this).removeAttr("style");
+                                                        $(this).closest("tr").removeAttr("style");
+                                                    });
+                                                });
+                                            </script>
+                                        <?php endif; ?>
+                                            <?php
+                                        }
+                                    ?>
+                                    <div class="clear"></div>
+                                </div>
+
+                            </div>
+                            <?php
+                        }
+                    ?>
+
+
                     <div class="formcon">
                         <div class="yuzde30"><?php echo __("website/account_info/gdpr-tx3"); ?></div>
                         <div class="yuzde70">
@@ -2045,7 +2284,7 @@
                                 <div class="yuzde30"><?php echo __("website/account_info/gdpr-tx7"); ?></div>
                                 <div class="yuzde70">
                                     <div class="yuzde70">
-                                        <a style="    margin-bottom: 10px;" class="sbtn" target="_blank" href="<?php echo $operation_link; ?>?operation=download_personal_data_gdpr&token=<?php echo Validation::get_csrf_token('account',false); ?>&format=xml"><i class="fa fa-cloud-download" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx8"); ?></strong></a><div class="clear"></div>
+                                        <a style="    margin-bottom: 10px;" class="lbtn" target="_blank" href="<?php echo $operation_link; ?>?operation=download_personal_data_gdpr&token=<?php echo Validation::get_csrf_token('account',false); ?>&format=xml"><i class="fa fa-cloud-download" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx8"); ?></strong></a><div class="clear"></div>
                                         <span class="kinfo"><?php echo __("website/account_info/gdpr-tx9"); ?><BR>(<?php echo __("website/account_info/gdpr-tx10"); ?>) </span>
 
                                         <?php
@@ -2075,14 +2314,14 @@
                                                 <div class="clear"></div>
                                                 <div class="line"></div>
                                                 <span class="kinfo" style="color: #f44336;    margin-bottom: 10px;    float: left;"><i class="fas fa-exclamation-triangle"></i> <?php echo __("website/account_info/gdpr-tx16",['{date}' => UserManager::formatTimeZone($gdpr_request["created_at"] ?? '',$timezone,Config::get("options/date-format")." - H:i"),'{type}' => $gdpr_request["type"] == "remove" ? __("website/account_info/gdpr-tx14") : __("website/account_info/gdpr-tx15")]); ?></span><div class="clear"></div>
-                                                <a href="javascript:void 0;" onclick="gdpr_request(this,'cancel');" class="sbtn"><strong><?php echo __("website/account_info/gdpr-tx23"); ?></strong></a>
+                                                <a href="javascript:void 0;" onclick="gdpr_request(this,'cancel');" class="lbtn"><strong><?php echo __("website/account_info/gdpr-tx23"); ?></strong></a>
                                                 <?php
                                             }
                                             else
                                             {
                                                 ?><div class="clear"></div>
-                                                <a class="sbtn red" href="javascript:open_modal('gdpr_remove_modal',{headerColor:'red'}); void 0;"><i class="fa fa-trash" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx14"); ?></strong></a>
-                                                <a class="sbtn" href="javascript:open_modal('gdpr_anonymize_modal'); void 0;"><i class="fa fa-ban" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx15"); ?></strong></a>
+                                                <a class="lbtn red" href="javascript:open_modal('gdpr_remove_modal',{headerColor:'red'}); void 0;"><i class="fa fa-trash" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx14"); ?></strong></a>
+                                                <a class="lbtn" href="javascript:open_modal('gdpr_anonymize_modal'); void 0;"><i class="fa fa-ban" aria-hidden="true"></i> <strong><?php echo __("website/account_info/gdpr-tx15"); ?></strong></a>
 
                                                 <?php
                                                 if(isset($gdpr_request) && $gdpr_request && Utility::strlen($gdpr_request["status_note"]) > 1)

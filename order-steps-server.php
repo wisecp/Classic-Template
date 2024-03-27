@@ -144,7 +144,7 @@
     <?php endif; ?>
 
     <?php if($haveStock && $step == "configuration"): ?>
-        <form action="<?php echo $links["step"]; ?>" method="post" id="StepForm1" enctype="multipart/form-data">
+        <form action="<?php echo $links["step"]; ?>" method="post" id="StepForm1" enctype="multipart/form-data" onsubmit="return false;">
             <?php echo Validation::get_csrf_token('order-steps'); ?>
 
             <div class="sunucukonfigurasyonu">

@@ -323,20 +323,20 @@
                                 <div class="error" id="Signforget_Form_output" align="center" style="display:none;font-weight:bold;"></div>
                             </div>
 
-
-                            <!-- Success Div -->
-                            <div id="forget_success" style="display:none">
-                                <div style="margin-top:30px;margin-bottom:70px;text-align:center;">
-                                    <i style="font-size:80px;    margin-bottom: 25px;" class="fa fa-check"></i>
-                                    <h4 style="font-weight:bold;"><?php echo __("website/sign/forget-success-title"); ?></h4>
-                                    <br>
-                                    <h5><?php echo __("website/sign/forget-success-content"); ?></h5>
-                                </div>
-                            </div>
-                            <!-- Success Div -->
-
                         </form>
                         <!-- Form END -->
+
+                        <!-- Success Div -->
+                        <div id="forget_success" style="display:none">
+                            <div style="margin-top:30px;margin-bottom:70px;text-align:center;">
+                                <i style="font-size:80px;    margin-bottom: 25px;" class="fa fa-check"></i>
+                                <h4 style="font-weight:bold;"><?php echo __("website/sign/forget-success-title"); ?></h4>
+                                <br>
+                                <h5><?php echo __("website/sign/forget-success-content"); ?></h5>
+                            </div>
+                        </div>
+                        <!-- Success Div -->
+
                     <?php endif; ?>
 
                     <!-- Success Div -->
@@ -468,7 +468,7 @@
                                         if(solve.message != undefined && solve.message != '')
                                             alert_error(solve.message,{timer:4000});
                                     }else if(solve.status == "sent"){
-                                        $("#forget_table").fadeOut(750,function() {
+                                        $("#Signforget_Form").fadeOut(750,function() {
                                             $("#forget_success").fadeIn(750);
                                         })
                                     }

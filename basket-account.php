@@ -649,17 +649,26 @@
                                                 </td>
                                             </tr>
 
-                                            <tr class="kind-content kind_2" style="display:none;">
-                                                <td width="30%"><?php echo __("website/sign/up-form-ctaxno"); ?> / <?php echo __("website/sign/up-form-ctaxoff"); ?></td>
-                                                <td>
-                                                    <?php if(Config::get("options/sign/up/kind/corporate/company_tax_number")): ?>
-                                                        <div class="yuzde50"><input name="company_tax_number" type="text"></div>
-                                                    <?php endif; ?>
-                                                    <?php if(Config::get("options/sign/up/kind/corporate/company_tax_office")): ?>
-                                                        <div class="yuzde50"><input name="company_tax_office" type="text" id="vergi_dairesi"></div>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
+                                            <?php if(Config::get("options/sign/up/kind/corporate/company_tax_number") || Config::get("options/sign/up/kind/corporate/company_tax_office")): ?>
+                                                <tr>
+                                                    <td width="30%">
+                                                        <?php
+                                                            if(Config::get("options/sign/up/kind/corporate/company_tax_number"))
+                                                                echo __("website/sign/up-form-ctaxno").(Config::get("options/sign/up/kind/corporate/company_tax_office") ? ' / ' : '');
+                                                            if(Config::get("options/sign/up/kind/corporate/company_tax_office"))
+                                                                echo __("website/sign/up-form-ctaxoff");
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if(Config::get("options/sign/up/kind/corporate/company_tax_number")): ?>
+                                                            <div class="yuzde50"><input name="company_tax_number" type="text"></div>
+                                                        <?php endif; ?>
+                                                        <?php if(Config::get("options/sign/up/kind/corporate/company_tax_office")): ?>
+                                                            <div class="yuzde50"><input name="company_tax_office" type="text"></div>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
                                         <?php endif; ?>
 
 

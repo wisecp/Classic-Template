@@ -6,7 +6,6 @@
 
     if(Config::get("theme/only-panel")) $meta["robots"] = "NOINDEX,NOFOLLOW";
 
-
     $currency_symbols = [];
     foreach(Money::getCurrencies() AS $currency){
         $symbol = $currency["prefix"] != '' ? trim($currency["prefix"]) : trim($currency["suffix"]);
@@ -52,8 +51,21 @@
                 $(".transfercode").slideToggle();
                 $(".transfercode input").focus();
             }
-            else
-                checkButton(document.getElementById("checkButton"));
+            else {
+                let button = document.getElementById("checkButton");
+                let gCaptchaInput = document.getElementById("grecaptcha-hidden-input-1");
+
+                if(gCaptchaInput) {
+                    let captchaInterval = setInterval(() => {
+                        if(gCaptchaInput.value.length > 0) {
+                            checkButton(button);
+                            clearInterval(captchaInterval);
+                        }
+                    },100);
+                }
+                else
+                    checkButton(button);
+            }
         }
 
         $("#transferbtn").click(function(){

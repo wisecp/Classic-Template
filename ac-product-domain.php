@@ -454,6 +454,10 @@
                 <li><a href="javascript:void(0)" class="tablinks" onclick="open_tab(this, 'transfer','tab')" data-tab="transfer"><i class="fa fa-random" aria-hidden="true"></i> <?php echo __("website/account_products/transfer-manager"); ?></a></li>
             <?php endif; ?>
 
+            <?php if($proanse["status"] != "cancelled"): ?>
+                <li><a href="javascript:void(0)" class="tablinks" onclick="open_tab(this, 'cancellation','tab')" data-tab="cancellation"><i class="fa fa-ban" aria-hidden="true"></i> <?php echo __("website/account_products/cancellation-request"); ?></a></li>
+            <?php endif; ?>
+
             <div class="orderidno"><span><?php echo __("website/account_products/table-ordernum"); ?></span><strong>#<?php echo $proanse["id"]; ?></strong></div>
 
         </ul>
@@ -2616,6 +2620,119 @@
                 <?php
             }
         ?>
+
+        <?php if($proanse["status"] != "cancelled"): ?>
+            <div id="tab-cancellation" class="tabcontent">
+                <div class="tabcontentcon">
+                    <?php
+                        if(isset($p_cancellation) && $p_cancellation)
+                        {
+                            $p_cancellation["data"] = Utility::jdecode($p_cancellation["data"],true);
+                            ?>
+                            <div style="margin-top:30px;margin-bottom:70px;text-align:center;">
+                                <i class="fa fa-info-circle" aria-hidden="true" style="font-size: 54px;margin-bottom: 15px;"></i>
+                                <h4 style="margin-bottom: 15px;"><strong><?php echo __("admin/events/cancelled-product-request"); ?></strong></h4>
+                                <div class="line"></div>
+                                <h5><strong><?php echo __("admin/orders/modal-reason-message"); ?></strong><br><?php echo $p_cancellation["data"]["reason"]; ?></h5>
+                                <div class="line"></div>
+                                <h5><strong><?php echo __("admin/tools/reminders-creation-date"); ?></strong><br><?php echo DateManager::format(Config::get("options/date-format")." - H:i",$p_cancellation["cdate"]); ?></h5>
+                                <?php
+                                    if($p_cancellation["status"] != "approved")
+                                    {
+                                        ?>
+                                        <a class="green lbtn" onclick="remove_cancelled_product(this);" href="javascript:void 0;" style="margin-top: 25px;"><?php echo __("website/account_products/remove-cancellation-request"); ?></a>
+                                        <script type="text/javascript">
+                                            function remove_cancelled_product(el){
+                                                var request = MioAjax({
+                                                    button_element:el,
+                                                    waiting_text:"<?php echo addslashes(__("website/others/button1-pending")); ?>",
+                                                    action: "<?php echo $links["controller"]; ?>",
+                                                    method: "POST",
+                                                    data:{operation:"remove_cancelled_product"}
+                                                },true,true);
+                                                request.done(function(result){
+                                                    if(result !== ''){
+                                                        var solve = getJson(result);
+                                                        if(solve !== false)
+                                                        {
+                                                            if(solve.status === "error")
+                                                                alert_error(solve.message,{timer:3000});
+                                                            else if(solve.status === "successful")
+                                                                window.location.href = location.href;
+                                                        }
+                                                    }
+                                                    else console.log(result);
+                                                });
+                                            }
+                                        </script>
+                                        <?php
+                                    }
+                                ?>
+                            </div>
+                        <?php
+                            }
+                            else
+                            {
+                        ?>
+                            <div class="red-info" style="margin-bottom:20px;">
+                                <div class="padding15">
+                                    <i class="fa fa-meh-o" aria-hidden="true"></i>
+                                    <p><?php echo __("website/account_products/canceled-desc"); ?></p>
+                                </div>
+                            </div>
+                            <form action="<?php echo $links["controller"]; ?>" method="post" id="CanceledProduct" style="<?php echo isset($p_cancellation) && $p_cancellation ? 'display:none;' : ''; ?>">
+                                <input type="hidden" name="operation" value="canceled_product">
+
+                                <textarea name="reason" cols="" rows="3" placeholder="<?php echo __("website/account_products/canceled-reason"); ?>"></textarea>
+                                <select name="urgency">
+                                    <option value="now"><?php echo __("website/account_products/canceled-urgency-now"); ?></option>
+                                    <option value="period-ending"><?php echo __("website/account_products/canceled-urgency-period-ending"); ?></option>
+                                </select>
+                                <a href="javascript:void(0);" class="redbtn gonderbtn mio-ajax-submit" mio-ajax-options='{"result":"CanceledProduct_submit","waiting_text":"<?php echo addslashes(__("website/others/button5-pending")); ?>"}'><?php echo __("website/account_products/canceled-button"); ?></a>
+                                <div class="clear"></div>
+                            </form>
+                            <div id="CanceledProduct_success" style="display: none;">
+                                <div style="margin-top:30px;margin-bottom:70px;text-align:center;">
+                                    <i style="font-size:70px;" class="fa fa-check"></i>
+                                    <h4><?php echo __("website/account_products/canceled-sent"); ?></h4>
+                                    <br>
+                                </div>
+                            </div>
+                            <script type="text/javascript">
+                                function CanceledProduct_submit(result) {
+                                    if(result != ''){
+                                        var solve = getJson(result);
+                                        if(solve !== false){
+                                            if(solve.status == "error"){
+                                                if(solve.for != undefined && solve.for != ''){
+                                                    $("#CanceledProduct "+solve.for).focus();
+                                                    $("#CanceledProduct "+solve.for).attr("style","border-bottom:2px solid red; color:red;");
+                                                    $("#CanceledProduct "+solve.for).change(function(){
+                                                        $(this).removeAttr("style");
+                                                    });
+                                                }
+                                                if(solve.message != undefined && solve.message != '')
+                                                    alert_error(solve.message,{timer:3000});
+                                            }else if(solve.status == "successful"){
+                                                $("#CanceledProduct").fadeOut(400,function(){
+                                                    $("#CanceledProduct_success").fadeIn(400);
+                                                    $("html,body").animate({scrollTop:200},600);
+                                                });
+                                            }
+                                        }else
+                                            console.log(result);
+                                    }
+                                }
+                            </script>
+                            <?php
+                        }
+                    ?>
+
+
+                </div>
+            </div>
+        <?php endif; ?>
+
 
     </div>
 
